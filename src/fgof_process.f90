@@ -7,6 +7,7 @@ module fgof_process
     FGOF_PROCESS_ERR_NOT_IMPLEMENTED, &
     FGOF_PROCESS_ERR_PIPE_FAILED, &
     FGOF_PROCESS_ERR_SPAWN_FAILED, &
+    FGOF_PROCESS_ERR_TIMEOUT, &
     FGOF_PROCESS_MODE_ARGV, &
     FGOF_PROCESS_MODE_NONE, &
     FGOF_PROCESS_MODE_SHELL, &
@@ -29,6 +30,7 @@ module fgof_process
   public :: FGOF_PROCESS_ERR_SPAWN_FAILED
   public :: FGOF_PROCESS_ERR_EXEC_FAILED
   public :: FGOF_PROCESS_ERR_PIPE_FAILED
+  public :: FGOF_PROCESS_ERR_TIMEOUT
   public :: FGOF_PROCESS_ERR_NOT_IMPLEMENTED
   public :: command
   public :: shell
@@ -105,26 +107,6 @@ contains
     if (present(options)) then
       if (options%timeout_ms < 0) then
         call set_error(res, FGOF_PROCESS_ERR_INVALID_OPTION, "timeout_ms must be >= 0")
-        return
-      end if
-
-      if (options%timeout_ms > 0) then
-        call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "timeout support is not implemented yet")
-        return
-      end if
-
-      if (options%capture_stdout) then
-        call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "stdout capture is not implemented yet")
-        return
-      end if
-
-      if (options%capture_stderr) then
-        call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "stderr capture is not implemented yet")
-        return
-      end if
-
-      if (allocated(options%stdin)) then
-        call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "stdin piping is not implemented yet")
         return
       end if
 

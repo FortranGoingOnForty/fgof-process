@@ -38,15 +38,16 @@ Implemented today:
 - synchronous argv and shell execution
 - child-only cwd override
 - child-only env set and unset behavior
+- stdin piping
+- stdout capture
+- stderr capture
+- timeout enforcement with partial output preservation
 - result-first error codes for invalid commands, spawn failures, exec failures, and pipe setup failures
 
 Still deferred:
 
-- stdout capture
-- stderr capture
-- stdin piping
-- timeout enforcement
 - async process handles
+- streaming process handles
 
 ## Package Goals
 
