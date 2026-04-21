@@ -264,7 +264,7 @@ contains
     integer :: i
     integer :: n
 
-    n = len_trim(str)
+    n = len(str)
     allocate(buf(n + 1))
     do i = 1, n
       buf(i) = str(i:i)
@@ -294,29 +294,29 @@ contains
       return
     end if
 
-    width = max_trimmed_length(values) + 1
+    width = max_string_length(values) + 1
     stride = int(width, c_int)
     allocate(buffer(size(values) * width))
     buffer = c_null_char
 
     do i = 1, size(values)
       offset = (i - 1) * width
-      do j = 1, len_trim(values(i))
+      do j = 1, len(values(i))
         buffer(offset + j) = values(i)(j:j)
       end do
-      buffer(offset + len_trim(values(i)) + 1) = c_null_char
+      buffer(offset + len(values(i)) + 1) = c_null_char
     end do
   end subroutine pack_string_array
 
-  integer function max_trimmed_length(values) result(max_len)
+  integer function max_string_length(values) result(max_len)
     character(len=*), intent(in) :: values(:)
     integer :: i
 
     max_len = 1
     do i = 1, size(values)
-      max_len = max(max_len, len_trim(values(i)))
+      max_len = max(max_len, len(values(i)))
     end do
-  end function max_trimmed_length
+  end function max_string_length
 
   function errno_message(prefix, errnum) result(message)
     character(len=*), intent(in) :: prefix

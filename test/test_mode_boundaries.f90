@@ -15,6 +15,10 @@ program test_mode_boundaries
   if (res%error_code /= FGOF_PROCESS_OK) error stop "argv env literal capture should not be a library error"
   if (res%stdout /= "$HOME") error stop "argv mode should not expand shell variables"
 
+  res = run(command("printf", [character(len=2) :: "%s", "a "]), opts)
+  if (res%error_code /= FGOF_PROCESS_OK) error stop "argv trailing space capture should not be a library error"
+  if (res%stdout /= "a ") error stop "argv mode should preserve trailing spaces"
+
   res = run(shell("printf 'left' | sed 's/left/right/'"), opts)
   if (res%error_code /= FGOF_PROCESS_OK) error stop "shell pipeline should not be a library error"
   if (res%stdout /= "right") error stop "shell mode should interpret shell pipelines"

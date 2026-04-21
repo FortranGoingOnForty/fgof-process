@@ -46,13 +46,13 @@ contains
     integer :: i
 
     cmd%mode = FGOF_PROCESS_MODE_ARGV
-    cmd%program = trim(program)
+    cmd%program = program
 
     if (present(argv)) then
-      arg_len = max_trimmed_length(argv)
+      arg_len = max_string_length(argv)
       allocate(character(len=arg_len) :: cmd%argv(size(argv)))
       do i = 1, size(argv)
-        cmd%argv(i) = trim(argv(i))
+        cmd%argv(i) = argv(i)
       end do
     else
       allocate(character(len=1) :: cmd%argv(0))
@@ -64,7 +64,7 @@ contains
     type(process_command) :: cmd
 
     cmd%mode = FGOF_PROCESS_MODE_SHELL
-    cmd%command_line = trim(command_line)
+    cmd%command_line = command_line
     allocate(character(len=1) :: cmd%argv(0))
   end function shell
 
@@ -162,14 +162,14 @@ contains
     res%error_message = trim(message)
   end subroutine set_error
 
-  integer function max_trimmed_length(values) result(max_len)
+  integer function max_string_length(values) result(max_len)
     character(len=*), intent(in) :: values(:)
     integer :: i
 
     max_len = 1
     do i = 1, size(values)
-      max_len = max(max_len, len_trim(values(i)))
+      max_len = max(max_len, len(values(i)))
     end do
-  end function max_trimmed_length
+  end function max_string_length
 
 end module fgof_process

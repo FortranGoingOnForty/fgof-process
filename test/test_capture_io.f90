@@ -1,5 +1,5 @@
 program test_capture_io
-  use fgof_process, only : FGOF_PROCESS_OK, process_options, process_result, run, shell
+  use fgof_process, only : FGOF_PROCESS_OK, command, process_options, process_result, run, shell
   implicit none
 
   type(process_options) :: opts
@@ -21,4 +21,11 @@ program test_capture_io
   res = run(shell("read value; test ""$value"" = ""hello"""), opts)
   if (res%error_code /= FGOF_PROCESS_OK) error stop "stdin piping should not be a library error"
   if (res%exit_code /= 0) error stop "stdin piping should affect the child"
+
+  opts = process_options()
+  opts%stdin = "hello "
+  opts%capture_stdout = .true.
+  res = run(command("cat"), opts)
+  if (res%error_code /= FGOF_PROCESS_OK) error stop "stdin capture should not be a library error"
+  if (res%stdout /= "hello ") error stop "stdin piping should preserve trailing spaces"
 end program test_capture_io

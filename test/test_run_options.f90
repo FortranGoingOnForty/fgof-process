@@ -19,6 +19,12 @@ program test_run_options
   if (res%exit_code /= 0) error stop "env_set should affect the child"
 
   opts = process_options()
+  opts%env_set = ["FGOF_PROCESS_TEST=hello "]
+  res = run(shell("test ""$FGOF_PROCESS_TEST"" = ""hello """), opts)
+  if (res%error_code /= FGOF_PROCESS_OK) error stop "env_set trailing spaces should not be a library error"
+  if (res%exit_code /= 0) error stop "env_set should preserve trailing spaces"
+
+  opts = process_options()
   opts%env_set = ["FGOF_PROCESS_TEST=hello"]
   opts%env_unset = ["FGOF_PROCESS_TEST"]
   res = run(shell("test -z ""$FGOF_PROCESS_TEST"""), opts)
