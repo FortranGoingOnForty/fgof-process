@@ -31,10 +31,17 @@ jobs:
           version: latest
 
       - name: Set up fpm
+        if: runner.os != 'macOS'
         uses: fortran-lang/setup-fpm@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           fpm-version: v0.13.0
+
+      - name: Install fpm with Homebrew
+        if: runner.os == 'macOS'
+        run: |
+          brew tap fortran-lang/homebrew-fortran
+          brew install fpm
 
       - name: Show tool versions
         run: |
