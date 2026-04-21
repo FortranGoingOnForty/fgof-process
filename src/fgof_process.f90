@@ -2,6 +2,7 @@ module fgof_process
   use fgof_process_posix, only : run_posix_basic
   use fgof_process_types, only : &
     FGOF_PROCESS_ERR_EXEC_FAILED, &
+    FGOF_PROCESS_ERR_INTERNAL, &
     FGOF_PROCESS_ERR_INVALID_COMMAND, &
     FGOF_PROCESS_ERR_INVALID_OPTION, &
     FGOF_PROCESS_ERR_NOT_IMPLEMENTED, &
@@ -31,6 +32,7 @@ module fgof_process
   public :: FGOF_PROCESS_ERR_EXEC_FAILED
   public :: FGOF_PROCESS_ERR_PIPE_FAILED
   public :: FGOF_PROCESS_ERR_TIMEOUT
+  public :: FGOF_PROCESS_ERR_INTERNAL
   public :: FGOF_PROCESS_ERR_NOT_IMPLEMENTED
   public :: command
   public :: shell
