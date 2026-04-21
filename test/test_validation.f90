@@ -30,4 +30,9 @@ program test_validation
   opts%timeout_ms = -1
   res = run(shell_cmd, opts)
   if (res%error_code /= FGOF_PROCESS_ERR_INVALID_OPTION) error stop "negative timeout should be invalid"
+
+  opts = process_options()
+  opts%env_unset = ["FGOF_PROCESS_TEST=hello"]
+  res = run(shell_cmd, opts)
+  if (res%error_code /= FGOF_PROCESS_ERR_INVALID_OPTION) error stop "env_unset entries with '=' should be invalid"
 end program test_validation

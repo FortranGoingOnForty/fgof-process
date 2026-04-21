@@ -130,6 +130,11 @@ contains
             call set_error(res, FGOF_PROCESS_ERR_INVALID_OPTION, "env_unset entries must not be empty")
             return
           end if
+
+          if (index(options%env_unset(i), "=") > 0) then
+            call set_error(res, FGOF_PROCESS_ERR_INVALID_OPTION, "env_unset entries must use KEY format")
+            return
+          end if
         end do
       end if
     end if
