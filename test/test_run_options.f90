@@ -4,9 +4,11 @@ program test_run_options
 
   type(process_options) :: opts
   type(process_result) :: res
+  character(len=:), allocatable :: cwd_check
 
-  opts%cwd = "/Users/mfwolffe/GithubOrgs/FortranGoingOnForty/fgof-process"
-  res = run(shell("test ""$PWD"" = ""/Users/mfwolffe/GithubOrgs/FortranGoingOnForty/fgof-process"""), opts)
+  opts%cwd = "/"
+  cwd_check = 'test "$(pwd)" = "/"'
+  res = run(shell(cwd_check), opts)
   if (res%error_code /= FGOF_PROCESS_OK) error stop "cwd override should not be a library error"
   if (res%exit_code /= 0) error stop "cwd override should succeed"
 
