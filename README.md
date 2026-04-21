@@ -27,9 +27,26 @@ Future scope:
 
 ## Status
 
-Sprint 00 and 01 scaffold.
+Early sync-runner milestone.
 
 This repository is the first package in the FortranGoingOnForty reusable library family and is intended to be consumed standalone or via the umbrella catalog repo at `lib-modules`.
+
+Implemented today:
+
+- public `fgof_process` and `fgof_process_types` modules
+- `command()` and `shell()` constructors
+- synchronous argv and shell execution
+- child-only cwd override
+- child-only env set and unset behavior
+- result-first error codes for invalid commands, spawn failures, exec failures, and pipe setup failures
+
+Still deferred:
+
+- stdout capture
+- stderr capture
+- stdin piping
+- timeout enforcement
+- async process handles
 
 ## Package Goals
 

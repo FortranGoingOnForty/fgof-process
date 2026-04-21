@@ -1,8 +1,12 @@
 module fgof_process
+  use fgof_process_posix, only : run_posix_basic
   use fgof_process_types, only : &
+    FGOF_PROCESS_ERR_EXEC_FAILED, &
     FGOF_PROCESS_ERR_INVALID_COMMAND, &
     FGOF_PROCESS_ERR_INVALID_OPTION, &
     FGOF_PROCESS_ERR_NOT_IMPLEMENTED, &
+    FGOF_PROCESS_ERR_PIPE_FAILED, &
+    FGOF_PROCESS_ERR_SPAWN_FAILED, &
     FGOF_PROCESS_MODE_ARGV, &
     FGOF_PROCESS_MODE_NONE, &
     FGOF_PROCESS_MODE_SHELL, &
@@ -22,6 +26,9 @@ module fgof_process
   public :: FGOF_PROCESS_OK
   public :: FGOF_PROCESS_ERR_INVALID_COMMAND
   public :: FGOF_PROCESS_ERR_INVALID_OPTION
+  public :: FGOF_PROCESS_ERR_SPAWN_FAILED
+  public :: FGOF_PROCESS_ERR_EXEC_FAILED
+  public :: FGOF_PROCESS_ERR_PIPE_FAILED
   public :: FGOF_PROCESS_ERR_NOT_IMPLEMENTED
   public :: command
   public :: shell
@@ -63,6 +70,7 @@ contains
     type(process_command), intent(in) :: cmd
     type(process_options), intent(in), optional :: options
     type(process_result) :: res
+    integer :: i
 
     call init_result(res)
 
@@ -99,9 +107,52 @@ contains
         call set_error(res, FGOF_PROCESS_ERR_INVALID_OPTION, "timeout_ms must be >= 0")
         return
       end if
+
+      if (options%timeout_ms > 0) then
+        call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "timeout support is not implemented yet")
+        return
+      end if
+
+      if (options%capture_stdout) then
+        call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "stdout capture is not implemented yet")
+        return
+      end if
+
+      if (options%capture_stderr) then
+        call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "stderr capture is not implemented yet")
+        return
+      end if
+
+      if (allocated(options%stdin)) then
+        call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "stdin piping is not implemented yet")
+        return
+      end if
+
+      if (allocated(options%env_set)) then
+        do i = 1, size(options%env_set)
+          if (len_trim(options%env_set(i)) == 0) then
+            call set_error(res, FGOF_PROCESS_ERR_INVALID_OPTION, "env_set entries must not be empty")
+            return
+          end if
+
+          if (index(options%env_set(i), "=") <= 1) then
+            call set_error(res, FGOF_PROCESS_ERR_INVALID_OPTION, "env_set entries must use KEY=VALUE format")
+            return
+          end if
+        end do
+      end if
+
+      if (allocated(options%env_unset)) then
+        do i = 1, size(options%env_unset)
+          if (len_trim(options%env_unset(i)) == 0) then
+            call set_error(res, FGOF_PROCESS_ERR_INVALID_OPTION, "env_unset entries must not be empty")
+            return
+          end if
+        end do
+      end if
     end if
 
-    call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "run() is not implemented yet")
+    call run_posix_basic(cmd, options, res)
   end function run
 
   subroutine init_result(res)
