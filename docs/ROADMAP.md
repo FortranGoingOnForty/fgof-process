@@ -1,5 +1,11 @@
 # Roadmap
 
+## Current focus
+
+- harden the synchronous v1 surface with behavior tests
+- document the argv-first contract clearly enough that tool authors can adopt it quickly
+- add Linux and macOS CI so `fpm test` is the baseline trust signal
+
 ## v0.1
 
 - establish the stable public API
