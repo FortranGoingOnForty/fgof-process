@@ -1,10 +1,14 @@
 # fgof-process
 
+[![CI](https://github.com/FortranGoingOnForty/fgof-process/actions/workflows/ci.yml/badge.svg)](https://github.com/FortranGoingOnForty/fgof-process/actions/workflows/ci.yml)
+
 POSIX-first process and subprocess helpers for modern Fortran applications.
 
 `fgof-process` is intended to be a small, standalone library that gives Fortran tools a more ergonomic process API than raw `execute_command_line`, thin POSIX wrappers, or experimental process surfaces that still feel too low-level for real tooling.
 
 It is built for the kind of Fortran programs that need to orchestrate other tools: shells, editors, TUI apps, developer tooling, test fixtures, and automation helpers.
+
+It is the first package in the [FortranGoingOnForty lib-modules](https://github.com/FortranGoingOnForty/lib-modules) catalog, but it is intended to stand on its own as a normal `fpm` package.
 
 Current v1 target:
 
@@ -29,9 +33,9 @@ Future scope:
 
 ## Status
 
-Early sync-runner milestone.
+Sync-first v1 in active development.
 
-This repository is the first package in the FortranGoingOnForty reusable library family and is intended to be consumed standalone or via the umbrella catalog repo at `lib-modules`.
+The core synchronous path is already implemented and tested. The remaining work is mainly polish, release hardening, and documentation quality rather than basic capability.
 
 Implemented today:
 
@@ -106,6 +110,14 @@ program demo_run
   print "(A)", res%stdout
 end program demo_run
 ```
+
+## Build And Test
+
+```bash
+fpm test
+```
+
+That is the baseline verification command locally and in CI.
 
 ## `command()` vs `shell()`
 
@@ -198,8 +210,8 @@ Important rule:
 
 ## Current Boundaries
 
-- Direct POSIX backend is planned for v1.
-- `stdlib_system` can inform behavior, but is not a required backend.
+- v1 uses a direct POSIX backend on macOS and Linux.
+- `stdlib_system` can inform naming and behavior, but is not a required dependency.
 - Async process handles are explicitly deferred until after the sync-first release.
 
 ## Development Notes
