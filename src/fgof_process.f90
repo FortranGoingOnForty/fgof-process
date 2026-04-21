@@ -1,33 +1,31 @@
 module fgof_process
+  use fgof_process_types, only : &
+    FGOF_PROCESS_ERR_INVALID_COMMAND, &
+    FGOF_PROCESS_ERR_INVALID_OPTION, &
+    FGOF_PROCESS_ERR_NOT_IMPLEMENTED, &
+    FGOF_PROCESS_MODE_ARGV, &
+    FGOF_PROCESS_MODE_NONE, &
+    FGOF_PROCESS_MODE_SHELL, &
+    FGOF_PROCESS_OK, &
+    process_command, &
+    process_options, &
+    process_result
   implicit none
   private
 
   public :: process_command
   public :: process_options
   public :: process_result
+  public :: FGOF_PROCESS_MODE_NONE
+  public :: FGOF_PROCESS_MODE_ARGV
+  public :: FGOF_PROCESS_MODE_SHELL
+  public :: FGOF_PROCESS_OK
+  public :: FGOF_PROCESS_ERR_INVALID_COMMAND
+  public :: FGOF_PROCESS_ERR_INVALID_OPTION
+  public :: FGOF_PROCESS_ERR_NOT_IMPLEMENTED
   public :: command
+  public :: shell
   public :: run
-
-  type :: process_command
-    character(len=:), allocatable :: program
-    character(len=:), allocatable :: argv(:)
-  end type process_command
-
-  type :: process_options
-    character(len=:), allocatable :: cwd
-    logical :: capture_stdout = .false.
-    logical :: capture_stderr = .false.
-    integer :: timeout_ms = 0
-    character(len=:), allocatable :: env(:)
-  end type process_options
-
-  type :: process_result
-    integer :: exit_code = -1
-    logical :: timed_out = .false.
-    character(len=:), allocatable :: stdout
-    character(len=:), allocatable :: stderr
-    character(len=:), allocatable :: error_message
-  end type process_result
 
 contains
 
@@ -35,14 +33,15 @@ contains
     character(len=*), intent(in) :: program
     character(len=*), intent(in), optional :: argv(:)
     type(process_command) :: cmd
+    integer :: arg_len
     integer :: i
 
+    cmd%mode = FGOF_PROCESS_MODE_ARGV
     cmd%program = trim(program)
 
     if (present(argv)) then
-      allocate(character(len=len_trim(program)) :: cmd%argv(0))
-      deallocate(cmd%argv)
-      allocate(character(len=max(1, max_trimmed_length(argv))) :: cmd%argv(size(argv)))
+      arg_len = max_trimmed_length(argv)
+      allocate(character(len=arg_len) :: cmd%argv(size(argv)))
       do i = 1, size(argv)
         cmd%argv(i) = trim(argv(i))
       end do
@@ -51,29 +50,84 @@ contains
     end if
   end function command
 
+  function shell(command_line) result(cmd)
+    character(len=*), intent(in) :: command_line
+    type(process_command) :: cmd
+
+    cmd%mode = FGOF_PROCESS_MODE_SHELL
+    cmd%command_line = trim(command_line)
+    allocate(character(len=1) :: cmd%argv(0))
+  end function shell
+
   function run(cmd, options) result(res)
     type(process_command), intent(in) :: cmd
     type(process_options), intent(in), optional :: options
     type(process_result) :: res
 
-    res%exit_code = -1
-    res%timed_out = .false.
-    res%stdout = ""
-    res%stderr = ""
-    res%error_message = "run() is not implemented yet"
+    call init_result(res)
 
-    if (.not. allocated(cmd%program)) then
-      res%error_message = "command program is not set"
+    select case (cmd%mode)
+    case (FGOF_PROCESS_MODE_ARGV)
+      if (.not. allocated(cmd%program)) then
+        call set_error(res, FGOF_PROCESS_ERR_INVALID_COMMAND, "argv command program is not set")
+        return
+      end if
+
+      if (len_trim(cmd%program) == 0) then
+        call set_error(res, FGOF_PROCESS_ERR_INVALID_COMMAND, "argv command program must not be empty")
+        return
+      end if
+
+    case (FGOF_PROCESS_MODE_SHELL)
+      if (.not. allocated(cmd%command_line)) then
+        call set_error(res, FGOF_PROCESS_ERR_INVALID_COMMAND, "shell command line is not set")
+        return
+      end if
+
+      if (len_trim(cmd%command_line) == 0) then
+        call set_error(res, FGOF_PROCESS_ERR_INVALID_COMMAND, "shell command line must not be empty")
+        return
+      end if
+
+    case default
+      call set_error(res, FGOF_PROCESS_ERR_INVALID_COMMAND, "command mode is not set")
       return
-    end if
+    end select
 
     if (present(options)) then
       if (options%timeout_ms < 0) then
-        res%error_message = "timeout_ms must be >= 0"
+        call set_error(res, FGOF_PROCESS_ERR_INVALID_OPTION, "timeout_ms must be >= 0")
         return
       end if
     end if
+
+    call set_error(res, FGOF_PROCESS_ERR_NOT_IMPLEMENTED, "run() is not implemented yet")
   end function run
+
+  subroutine init_result(res)
+    type(process_result), intent(out) :: res
+
+    res%launched = .false.
+    res%completed = .false.
+    res%timed_out = .false.
+    res%exited_normally = .false.
+    res%exit_code = -1
+    res%term_signal = 0
+    res%stdout = ""
+    res%stderr = ""
+    res%error_code = FGOF_PROCESS_OK
+    res%error_message = ""
+    res%elapsed_ms = 0
+  end subroutine init_result
+
+  subroutine set_error(res, code, message)
+    type(process_result), intent(inout) :: res
+    integer, intent(in) :: code
+    character(len=*), intent(in) :: message
+
+    res%error_code = code
+    res%error_message = trim(message)
+  end subroutine set_error
 
   integer function max_trimmed_length(values) result(max_len)
     character(len=*), intent(in) :: values(:)

@@ -1,11 +1,12 @@
 program test_command
-  use fgof_process, only : process_command, command
+  use fgof_process, only : FGOF_PROCESS_MODE_ARGV, command, process_command
   implicit none
 
   type(process_command) :: cmd
 
   cmd = command("printf", ["hello", "world"])
 
+  if (cmd%mode /= FGOF_PROCESS_MODE_ARGV) error stop "mode mismatch"
   if (.not. allocated(cmd%program)) error stop "program not allocated"
   if (cmd%program /= "printf") error stop "program mismatch"
   if (.not. allocated(cmd%argv)) error stop "argv not allocated"

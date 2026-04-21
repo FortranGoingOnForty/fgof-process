@@ -2,22 +2,20 @@
 
 ## v0.1
 
-- establish standalone repo and `fpm` package
-- define initial public types
-- implement argv-first command construction
-- implement synchronous `run`
-- add basic tests
+- establish the stable public API
+- implement synchronous argv-first execution
+- add shell convenience via explicit `shell()`
+- support cwd, env, stdin, stdout, stderr, and timeouts
+- ship a documented sync-first library that tool authors actually want to use
 
 ## v0.2
 
-- stdout and stderr capture
-- cwd and env overrides
-- timeout handling
-- richer errors
+- async process handles
+- richer process control
+- signal helpers
+- stronger process-fixture testing support
 
 ## v0.3
 
-- async spawn or wait
-- process handles
-- kill and terminate helpers
-- integration-test utilities
+- companion packages such as `fgof-proc-test`
+- possible PTY-facing integrations
