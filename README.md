@@ -194,6 +194,7 @@ Important rule:
 
 - macOS
 - Linux
+- GitHub Actions CI validates the package on `macos-latest` and `ubuntu-latest` with the GCC toolchain and `fpm v0.13.0`
 
 ## Current Boundaries
 
