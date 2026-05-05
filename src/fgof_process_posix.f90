@@ -30,7 +30,8 @@ module fgof_process_posix
                                     env_set_blob, env_set_count, env_set_stride, &
                                     env_unset_blob, env_unset_count, env_unset_stride, &
                                     stdout_path, stdout_path_len, stderr_path, stderr_path_len, &
-                                    exit_code, term_signal, exec_failed, timed_out, sys_errno) bind(C, name="fgof_process_run_basic")
+                                    exit_code, term_signal, exec_failed, timed_out, sys_errno) &
+      bind(C, name="fgof_process_run_basic")
       import :: c_char, c_int
       character(kind=c_char), intent(in) :: program(*)
       character(kind=c_char), intent(in) :: argv_blob(*)
