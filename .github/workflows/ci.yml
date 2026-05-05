@@ -9,6 +9,9 @@ on:
 permissions:
   contents: read
 
+env:
+  FPM_VERSION: "0.13.0"
+
 jobs:
   test:
     name: Test (${{ matrix.os }})
@@ -30,12 +33,16 @@ jobs:
           compiler: gcc
           version: latest
 
-      - name: Set up fpm
+      - name: Install fpm from official release
         if: runner.os != 'macOS'
-        uses: fortran-lang/setup-fpm@v9
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          fpm-version: v0.13.0
+        run: |
+          asset="fpm-${FPM_VERSION}-linux-x86_64-gcc-12"
+          curl -fsSLo "${asset}" "https://github.com/fortran-lang/fpm/releases/download/v${FPM_VERSION}/${asset}"
+          curl -fsSLo "${asset}.sha256" "https://github.com/fortran-lang/fpm/releases/download/v${FPM_VERSION}/${asset}.sha256"
+          shasum -a 256 -c "${asset}.sha256"
+          chmod +x "${asset}"
+          mv "${asset}" fpm
+          echo "${PWD}" >> "$GITHUB_PATH"
 
       - name: Install fpm with Homebrew
         if: runner.os == 'macOS'
