@@ -33,9 +33,10 @@ Future scope:
 
 ## Status
 
-Sync-first v1 in active development.
+Sync-first `v0.1.1` is released.
 
-The core synchronous path is already implemented and tested. The remaining work is mainly polish, release hardening, and documentation quality rather than basic capability.
+The core synchronous path is implemented and tested. `v0.1.1` carries the
+post-`v0.1.0` C interface binding wrap needed by downstream CI compilers.
 
 Implemented today:
 
