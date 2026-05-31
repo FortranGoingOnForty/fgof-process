@@ -103,6 +103,14 @@ contains
 
     call system_clock(start_count, rate)
 
+    allocate(c_program(0))
+    allocate(c_argv_blob(0))
+    allocate(c_command_line(0))
+    allocate(c_cwd(0))
+    allocate(c_stdin_data(0))
+    allocate(c_env_set_blob(0))
+    allocate(c_env_unset_blob(0))
+
     select case (cmd%mode)
     case (FGOF_PROCESS_MODE_ARGV)
       use_shell = 0_c_int
